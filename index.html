@@ -4,14 +4,36 @@
 <head>
     <title>SUPERHELL.ORG</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            text-align: center;
+            margin: 0px;
+            padding: 0px;
+            height: 100vh;
+
+            background: #C41313;
+
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        img {
+            border: 2px solid #F33E00;
+        }
+
+        .spacer {
+            flex-grow: 1;
         }
     </style>
 </head>
 
 <body>
-    <img src="/superhell.png" alt="Superhell.org is under construction." />
+    <div class="spacer"></div>
+    <img src="/superhell.gif" alt="Superhell.org is under construction." />
+    <div class="spacer"></div>
 </body>
 
 </html>
