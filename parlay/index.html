@@ -2,9 +2,16 @@
 <html lang="en">
 
 <head>
-    <title>PARLAY.</title>
-    <meta name="description" content="If absolutely need to waste your friends' fake money, this site is for you." />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PARLAY. BY MIDNA WICKERMAN.</title>
+    <meta name="description" content="ALL THE FUN OF LOSING THE HOUSE, NONE OF THE CONSEQUENCES." />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#cbdb70" />
+
+    <meta name="og:url" content="https://superhell.org/parlay/" />
+    <meta name="og:site_name" content="superhell.org" />
+    <meta name="og:image" content="https://superhell.org/parlay/logo.png" />
+    <meta name="og:title" content="PARLAY. BY MIDNA WICKERMAN." />
+    <meta name="og:description" content="ALL THE FUN OF LOSING THE HOUSE, NONE OF THE CONSEQUENCES." />
 
     <link rel="stylesheet" href="fonts.css" />
     <link rel="stylesheet" href="main.css" />
@@ -19,17 +26,23 @@
         <!-- gambling disclaimer -->
         <div class="page" id="page0">
             <header>
-                <h1>DISCLAIMER.</h1>
+                <h1>PARLAY.</h1>
+                <p>by Dr. Midna J. Wickerman, esq.</p>
             </header>
-            <main>
+            <main class="disclaimer">
+                <h3>
+                    Use of this website to manage real-money betting is <em>expressly</em> forbidden.
+                </h3>
                 <p>
-                    Use of this website to manage real-world betting is expressly forbidden. Gambling is a shitty
-                    idea anyways and parlays are financial suicide.
+                    Gambling is a terrible idea anyways and parlays are obscenely poor financial decisions. This
+                    website is not intended to promote gambling in any way, shape or form. If you win a bunch of
+                    imaginary money by doing this and then lose your mortgage putting it all on black at a real casino,
+                    that is <strong>not</strong> my fault and you should <em>really</em> know better.
                 </p>
             </main>
             <footer>
                 <div class="spacer"></div>
-                <a class="button primary" onclick="pageNext(this);">I promise to be good! &raquo;</a>
+                <a class="button primary" onclick="pageNext(this);">I promise to be good &raquo;</a>
             </footer>
         </div>
 
@@ -39,7 +52,7 @@
                 <h1>BUILD PARLAY.</h1>
                 <p>
                     Build a list of conditions that must be met for this parlay to pay out. These must be possible
-                    future events that can easily be proven true or false (for example, a public figure saying a
+                    future events that can clearly be proven true or false (for example, a public figure saying a
                     certain word during a speech or a baseball team winning a game).
                 </p>
             </header>
@@ -47,8 +60,8 @@
                 <div id="parlay-builder">
                     <div class="_template row">
                         <div class="actions">
-                            <a href="#" onclick="removeParlayCondition(this);" title="Remove this condition">
-                                <img width="24" height="24" src="img/delete.svg" />
+                            <a class="icon" href="#" onclick="removeCondition(this);" title="Remove this condition">
+                                <img width="24" height="24" src="img/x.svg" />
                             </a>
                         </div>
                         <input id="condition" type="text" placeholder="Click to add description." />
@@ -57,7 +70,7 @@
             </main>
             <footer>
                 <div class="spacer"></div>
-                <a class="button" onclick="addParlayCondition();">+ Add Condition</a>
+                <a class="button" onclick="addCondition();">+ Add Condition</a>
                 <a class="button primary" onclick="createParlay();">Next &raquo;</a>
             </footer>
 
@@ -65,7 +78,7 @@
                 const parlayConditions = [];
 
                 // remove condition from parlay table
-                function removeParlayCondition(element) {
+                function removeCondition(element) {
                     let el = element;
                     while (!el.classList.contains("row")) {
                         el = el.parentElement;
@@ -78,7 +91,7 @@
                 }
 
                 // add row to parlay table
-                function addParlayCondition() {
+                function addCondition() {
                     // get template row
                     const builder = document.querySelector("#parlay-builder");
                     const tempRow = builder.querySelector("._template");
@@ -105,7 +118,7 @@
 
                     // add rows to condition list
                     parlayConditions.length = 0;
-                    for (let i = 0; i < condRows.length; i ++) {
+                    for (let i = 0; i < condRows.length; i++) {
                         const row = condRows[i];
 
                         const value = row.querySelector("#condition").value;
@@ -121,8 +134,8 @@
                 }
 
                 // add two empty conditions for the player to fill out
-                addParlayCondition();
-                addParlayCondition();
+                addCondition();
+                addCondition();
             </script>
         </div>
 
@@ -138,8 +151,8 @@
                 <section id="player-builder">
                     <div class="_template row">
                         <div class="actions">
-                            <a href="#" onclick="removePlayer(this);" title="Murder this player">
-                                <img width="24" height="24" src="img/delete.svg" />
+                            <a class="icon" href="#" onclick="removePlayer(this);" title="Kill this player">
+                                <img width="24" height="24" src="img/kill.svg" />
                             </a>
                         </div>
                         <input id="name" type="text" placeholder="Click to enter player name..." />
@@ -183,7 +196,7 @@
                             }
                             total += Number.parseFloat((amount == null) ? 0 : amount);
                         });
-                        
+
                         if (invalidAmount || total == 0) {
                             text = "All dollar amounts must be greater than $50.00.";
                         } else {
@@ -239,7 +252,7 @@
 
                     // add rows to condition list
                     participants.length = 0;
-                    for (let i = 0; i < playerRows.length; i ++) {
+                    for (let i = 0; i < playerRows.length; i++) {
                         const row = playerRows[i];
 
                         const name = row.querySelector("#name").value;
@@ -249,7 +262,7 @@
                             alert("All players must be named.");
                             return;
                         }
-                        if (amount < 50) {
+                        if (!amount || amount < 50) {
                             alert("All dollar amounts must be at least $50.00.");
                             return;
                         }
@@ -268,20 +281,25 @@
         <!-- parlay in action -->
         <div class="page" id="page3" onenter="addConditions();">
             <header>
-                <h1>SUFFER.</h1>
+                <h1>...</h1>
                 <p id="page3-desc">
-                    To mark a condition as <b>passed</b> (having come true,) press the tick icon next to it. To mark it
-                    as <b>failed</b>, press the X icon. To reset a condition, click its status icon again.
+                    Please wait...
                 </p>
             </header>
             <main>
                 <section id="parlay-conditions">
+                    <p class="tutorial">
+                        To mark a condition as <strong>passed</strong> (having come true,) press the tick icon next to
+                        it. To mark it as <strong>failed</strong> (having not,) press the X icon. To reset a condition,
+                        click its status icon again.
+                    </p>
+                    <hr />
                     <div class="_template row">
                         <div class="actions">
                             <a id="pass" href="#" onclick="conditionPass(this);" title="This leg passes">
-                                <img width="24" height="24" src="img/yes.svg" /></a>
+                                <img width="24" height="24" src="img/tick.svg" alt="pass" /></a>
                             <a id="fail" href="#" onclick="conditionFail(this);" title="This leg fails">
-                                <img width="24" height="24" src="img/no.svg" /></a>
+                                <img width="24" height="24" src="img/x.svg" alt="fail" /></a>
                         </div>
                         <span id="text">Parlay Leg Text</span>
                     </div>
@@ -332,7 +350,7 @@
                         const newRow = tempRow.cloneNode(true);
                         newRow.classList.remove("_template");
 
-                        newRow.setAttribute("condindex", index ++);
+                        newRow.setAttribute("condindex", index++);
 
                         // add text
                         newRow.querySelector("#text").innerText = c.text;
@@ -355,7 +373,66 @@
                     recalculate();
                 }
 
+                function updateProgress() {
+                    let text;
+
+                    let passed = 0;
+                    let failed = 0;
+                    let indeterminate = 0;
+                    parlayConditions.forEach((c) => {
+                        if (c.failed) {
+                            failed++;
+                        } else if (c.passed) {
+                            passed++;
+                        } else {
+                            indeterminate++;
+                        }
+                    });
+
+                    text = `${passed} leg`;
+                    if (passed != 1) text += "s";
+                    text += ` passed / ${failed} leg`
+                    if (failed != 1) text += "s";
+                    text += " failed";
+
+                    if (indeterminate != 0) {
+                        text += ` / ${indeterminate} leg`
+                        if (indeterminate != 1) text += "s";
+                        text += " undecided";
+                    }
+
+                    const page = document.querySelector("#page3");
+
+                    const desc = page.querySelector("#page3-desc");
+                    if (failed != 0) {
+                        desc.classList.add("negative");
+                    } else {
+                        desc.classList.remove("negative");
+                    }
+
+                    desc.innerText = text;
+
+                    // update title
+                    const title = page.querySelector("h1");
+                    if (failed != 0) {
+                        title.innerText = "BUSTED.";
+                        title.classList.remove("a-great-success");
+                    } else if (failed == 0 && indeterminate == 0 && passed != 0) {
+                        title.innerText = "YOU'RE WINNER !";
+                        title.classList.add("a-great-success");
+                    } else {
+                        title.innerText = "PARLAY IN PROGRESS."
+                        title.classList.remove("a-great-success");
+                    }
+
+                    // show/hide tutorial
+                    const tutorial = page.querySelector(".tutorial");
+                    tutorial.style.display = (failed == 0 && passed == 0) ? null : "none";
+                }
+
                 function recalculate() {
+                    updateProgress();
+
                     // recalculate parlay pass/failure
                     stats.passed = true;
                     stats.failed = false;
@@ -387,11 +464,11 @@
                         statEarnings.classList.add("negative")
                         statEarnings.classList.remove("positive")
                     } else if (stats.passed) {
-                        statEarnings.innerText = dollarAmount(total);
+                        statEarnings.innerText = "+" + dollarAmount(total);
                         statEarnings.classList.add("positive")
                         statEarnings.classList.remove("negative");
                     } else {
-                        statEarnings.innerText = "???";
+                        statEarnings.innerText = "~";
                         statEarnings.classList.remove("positive");
                         statEarnings.classList.remove("negative");
                     }
@@ -417,7 +494,7 @@
                             playerEarnings.innerText = "-" + dollarAmount(p.bet);
                             playerEarnings.classList.add("negative");
                         } else if (stats.passed) {
-                            playerEarnings.innerText = dollarAmount(p.bet);
+                            playerEarnings.innerText = "+" + dollarAmount(p.bet);
                             playerEarnings.classList.add("positive");
                         } else {
                             playerEarnings.innerText = "???";
@@ -479,13 +556,13 @@
             const [src, dec] = n.toString().split(".", 2);
             let result = "";
             let comma = 0;
-            
-            for (i = src.length - 1; i >= 0; i --) {
+
+            for (i = src.length - 1; i >= 0; i--) {
                 if (comma != 0 && comma % 3 == 0) {
                     result = "," + result;
                     comma = 0;
                 }
-                comma ++;
+                comma++;
 
                 result = src[i] + result;
             }
