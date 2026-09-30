@@ -1,0 +1,277 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --accent: #cbdb70;
+
+    --text-normal: #ffffff;
+    --text-dark: #000000;
+}
+
+body {
+    background: url(img/table.png) #1b2819;
+    background-repeat: repeat;
+
+    font-size: 18px;
+
+    color: var(--text-normal);
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: 100vh;
+    margin: 0px;
+    padding: 0px;
+}
+
+h1 {
+    font-family: DotMatrix, monospace;
+    font-size: 48px;
+}
+
+/* this is also jank but whatever */
+.spacer {
+    flex-grow: 1;
+}
+
+/* controls */
+.button {
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 0.2rem 0.6rem;
+
+    cursor: pointer;
+    user-select: none;
+}
+.button:hover {
+    border-color: var(--text-normal);
+    color: var(--text-normal);
+}
+
+.button.primary {
+    font-weight: bold;
+    background: var(--accent);
+    color: var(--text-dark);
+}
+.button.primary:hover {
+    background: var(--text-normal);
+}
+
+input[type=text],
+input[type=number] {
+    font: inherit;
+    border: 1px solid var(--accent);
+    color: inherit;
+    background: none;
+}
+
+._template {
+    display: none !important;
+}
+
+/* "root" actually contains most of the page elements and stuff */
+#root {
+    display: flex;
+    flex-direction: column;
+
+    margin: 0px auto;
+
+    min-height: 100vh;
+    width: 1000px;
+
+    padding: 24px;
+}
+/* janky way to keep active page centered */
+#root::before {
+    content: ' ';
+    display: block;
+    flex-grow: 1;
+}
+#root::after {
+    content: ' ';
+    display: block;
+    flex-grow: 1;
+}
+
+#root .page {
+    display: flex;
+    flex-direction: column;
+
+    height: 60vh;
+}
+
+/* page header */
+#root .page header {
+    color: var(--accent);
+    border-bottom: 1px solid var(--accent);
+}
+#root .page header h1 {
+    margin: 0px;
+}
+#root .page header p {
+    margin: 0px;
+    margin-bottom: 1rem;
+
+    font-style: italic;
+}
+
+/* page footer */
+#root .page footer {
+    display: flex;
+    padding: 0.5rem 0px;
+    border-top: 1px solid var(--accent);
+}
+#root .page footer .button {
+    margin-left: 0.4rem;
+}
+#root .page footer .button:first-child {
+    margin-left: 0px;
+}
+
+/* main page body */
+#root .page main {
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+/* parlay builder */
+#parlay-builder input,
+#player-builder input {
+    border: none;
+}
+#parlay-builder .row,
+#player-builder .row {
+    background: #1b2819;
+
+    padding: 0.4rem;
+    display: flex;
+    align-items: center;
+}
+
+#parlay-builder .row:nth-child(even),
+#player-builder .row:nth-child(even) {
+    background: #1c2e1d;
+}
+
+#parlay-builder .row .actions,
+#player-builder .row .actions {
+    padding-right: 0.8rem;
+}
+#parlay-builder .row input,
+#player-builder .row input {
+    padding: 0px;
+    flex-grow: 1;
+}
+
+#player-builder .row .dollar-flare {
+    font-size: 24px;
+    font-weight: bold;
+    margin-right: 0.2rem;
+    user-select: none;
+    color: var(--accent);
+}
+
+#player-builder .row input[type=number] {
+    flex-grow: 0;
+}
+
+#page3 main {
+    display: flex;
+}
+
+#parlay-conditions {
+    flex-grow: 1;
+    background: #1b2819;
+}
+
+#parlay-conditions .row {
+    display: flex;
+    align-items: center;
+    padding: 0.4rem;
+    border-bottom: 1px solid #1a1f16;
+}
+#parlay-conditions .row .actions {
+    padding-right: 0.8rem;
+}
+#parlay-conditions .row.failed {
+    background: #3c0000;
+    color: #ffcccc;
+    font-style: italic;
+    border-color: red;
+}
+#parlay-conditions .row.passed {
+    background: #003c00;
+    color: var(--accent);
+    font-style: italic;
+    border-color: var(--accent);
+}
+
+#parlay-stats {
+    background: #1c2e1d;
+    padding: 1rem;
+
+    min-width: 40%;
+}
+#parlay-stats table {
+    margin-top: 1rem;
+    width: 100%;
+    gap: 2px;
+}
+#parlay-stats table th {
+    background: #0b0f0a;
+    text-align: left;
+}
+#parlay-stats table th,
+#parlay-stats table td {
+    border: 1px solid #1a1f16;
+    padding: 0.2rem 0.6rem;
+}
+
+#parlay-stats .field {
+    font-size: 16px;
+    color: var(--accent);
+}
+#parlay-stats .figure {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.negative {
+    color: #ff0000;
+}
+.negative img {
+    img {
+        filter: hue-rotate(-70deg);
+    }
+}
+.positive {
+    color: var(--accent);
+}
+
+a:hover img {
+    filter: brightness(200%);
+}
+
+@media screen and (max-width: 800px) {
+    #root::before {
+        display: none;
+    }
+    #root::after {
+        display: none;
+    }
+    #root {
+        width: 100vw;
+    }
+    #root .page {
+        height: 100%;
+        flex-grow: 1;
+    }
+    #page3 main {
+        display: block;
+    }
+    #parlay-stats {
+        width: 100%;
+    }
+}

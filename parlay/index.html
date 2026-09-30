@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>PARLAY.</title>
+    <meta name="description" content="If absolutely need to waste your friends' fake money, this site is for you." />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="main.css" />
+</head>
+
+<body>
+    <noscript>
+        This website requires JavaScript.
+    </noscript>
+
+    <div id="root">
+        <!-- gambling disclaimer -->
+        <div class="page" id="page0">
+            <header>
+                <h1>DISCLAIMER.</h1>
+            </header>
+            <main>
+                <p>
+                    Use of this website to manage real-world betting is expressly forbidden. Gambling is a shitty
+                    idea anyways and parlays are financial suicide.
+                </p>
+            </main>
+            <footer>
+                <div class="spacer"></div>
+                <a class="button primary" onclick="pageNext(this);">I promise to be good! &raquo;</a>
+            </footer>
+        </div>
+
+        <!-- parlay planning -->
+        <div class="page" id="page1">
+            <header>
+                <h1>BUILD PARLAY.</h1>
+                <p>
+                    Build a list of conditions that must be met for this parlay to pay out. These must be possible
+                    future events that can easily be proven true or false (for example, a public figure saying a
+                    certain word during a speech or a baseball team winning a game).
+                </p>
+            </header>
+            <main>
+                <div id="parlay-builder">
+                    <div class="_template row">
+                        <div class="actions">
+                            <a href="#" onclick="removeParlayCondition(this);" title="Remove this condition">
+                                <img width="24" height="24" src="img/delete.svg" />
+                            </a>
+                        </div>
+                        <input id="condition" type="text" placeholder="Click to add description." />
+                    </div>
+                </div>
+            </main>
+            <footer>
+                <div class="spacer"></div>
+                <a class="button" onclick="addParlayCondition();">+ Add Condition</a>
+                <a class="button primary" onclick="createParlay();">Next &raquo;</a>
+            </footer>
+
+            <script>
+                const parlayConditions = [];
+
+                // remove condition from parlay table
+                function removeParlayCondition(element) {
+                    let el = element;
+                    while (!el.classList.contains("row")) {
+                        el = el.parentElement;
+                        if (el == null) {
+                            throw new Error("can't find condition row");
+                        }
+                    }
+
+                    el.remove(el);
+                }
+
+                // add row to parlay table
+                function addParlayCondition() {
+                    // get template row
+                    const builder = document.querySelector("#parlay-builder");
+                    const tempRow = builder.querySelector("._template");
+
+                    // clone template row and remove template class
+                    const newRow = tempRow.cloneNode(true);
+                    newRow.classList.remove("_template");
+
+                    // add to table
+                    builder.appendChild(newRow);
+                }
+
+                // move to next page!
+                function createParlay() {
+                    // get every condition row in the table
+                    const builder = document.querySelector("#parlay-builder");
+                    const condRows = builder.querySelectorAll(".row:not(._template)");
+
+                    // make sure we have enough rows for a parlay
+                    if (condRows.length < 2) {
+                        alert("A parlay requires at least two conditions.");
+                        return;
+                    }
+
+                    // add rows to condition list
+                    parlayConditions.length = 0;
+                    for (let i = 0; i < condRows.length; i ++) {
+                        const row = condRows[i];
+
+                        const value = row.querySelector("#condition").value;
+                        if (!value) {
+                            alert("Parlay conditions cannot be empty.");
+                            return;
+                        }
+                        parlayConditions.push({ text: value, passed: false, failed: false });
+                    };
+
+                    // move to next page
+                    pageNext(builder);
+                }
+
+                // add two empty conditions for the player to fill out
+                addParlayCondition();
+                addParlayCondition();
+            </script>
+        </div>
+
+        <!-- parlay players -->
+        <div class="page" id="page2" onenter="updateDescription();">
+            <header>
+                <h1>ADD PLAYERS.</h1>
+                <p id="page2-desc">
+                    Please wait...
+                </p>
+            </header>
+            <main>
+                <section id="player-builder">
+                    <div class="_template row">
+                        <div class="actions">
+                            <a href="#" onclick="removePlayer(this);" title="Murder this player">
+                                <img width="24" height="24" src="img/delete.svg" />
+                            </a>
+                        </div>
+                        <input id="name" type="text" placeholder="Click to enter player name..." />
+                        <span class="dollar-flare" aria-hidden="true">
+                            $
+                        </span>
+                        <input id="bet" oninput="updateDescription();" type="number" placeholder="Bet ($)" />
+                    </div>
+                </section>
+            </main>
+            <footer>
+                <a class="button" onclick="pagePrev(this);" title="This is your last chance!">&laquo; Modify Parlay</a>
+                <div class="spacer"></div>
+                <a class="button" onclick="addPlayer();">+ Add Player</a>
+                <a class="button primary" onclick="beginParlay();">Begin! &raquo;</a>
+            </footer>
+
+            <script>
+                const participants = [];
+
+                function updateDescription() {
+                    const participants = document
+                        .querySelector("#player-builder")
+                        .querySelectorAll(".row:not(._template)");
+
+                    let text = "";
+                    if (participants.length == 0) {
+                        text = "Nobody's gambling, I suppose. Click Add Player below to add a player.";
+                    } else {
+                        text = `${parlayConditions.length}-leg parlay with ${participants.length} participant`;
+                        if (participants.length != 1) {
+                            text += "s";
+                        }
+
+                        let invalidAmount = false;
+                        let total = 0;
+                        participants.forEach((guy) => {
+                            const amount = guy.querySelector("input#bet").value;
+                            if (amount < 50) {
+                                invalidAmount = true;
+                            }
+                            total += Number.parseFloat((amount == null) ? 0 : amount);
+                        });
+                        
+                        if (invalidAmount || total == 0) {
+                            text = "All dollar amounts must be greater than $50.00.";
+                        } else {
+                            text += " totalling " + dollarAmount(total);
+                        }
+                    }
+
+                    const desc = document.querySelector("#page2-desc");
+                    if (desc) {
+                        desc.innerText = text;
+                    }
+                }
+
+                function removePlayer(element) {
+                    let el = element;
+                    while (!el.classList.contains("row")) {
+                        el = el.parentElement;
+                        if (el == null) {
+                            throw new Error("can't find player row");
+                        }
+                    }
+
+                    el.remove(el);
+
+                    updateDescription();
+                }
+
+                function addPlayer() {
+                    // get template row
+                    const builder = document.querySelector("#player-builder");
+                    const tempRow = builder.querySelector("._template");
+
+                    // clone template row and remove template class
+                    const newRow = tempRow.cloneNode(true);
+                    newRow.classList.remove("_template");
+
+                    // add to table
+                    builder.appendChild(newRow);
+
+                    updateDescription();
+                }
+
+                function beginParlay() {
+                    // get every condition row in the table
+                    const builder = document.querySelector("#player-builder");
+                    const playerRows = builder.querySelectorAll(".row:not(._template)");
+
+                    // make sure we have enough rows for a parlay
+                    if (playerRows.length < 1) {
+                        alert("A parlay requires at least one participant.");
+                        return;
+                    }
+
+                    // add rows to condition list
+                    participants.length = 0;
+                    for (let i = 0; i < playerRows.length; i ++) {
+                        const row = playerRows[i];
+
+                        const name = row.querySelector("#name").value;
+                        const amount = Number.parseFloat(row.querySelector("#bet").value);
+
+                        if (!name) {
+                            alert("All players must be named.");
+                            return;
+                        }
+                        if (amount < 50) {
+                            alert("All dollar amounts must be at least $50.00.");
+                            return;
+                        }
+
+                        participants.push({ name: name, bet: amount });
+                    };
+
+                    // move to next page
+                    pageNext(builder);
+                }
+
+                addPlayer();
+            </script>
+        </div>
+
+        <!-- parlay in action -->
+        <div class="page" id="page3" onenter="addConditions();">
+            <header>
+                <h1>SUFFER.</h1>
+                <p id="page3-desc">
+                    To mark a condition as <b>passed</b> (having come true,) press the tick icon next to it. To mark it
+                    as <b>failed</b>, press the X icon. To reset a condition, click its status icon again.
+                </p>
+            </header>
+            <main>
+                <section id="parlay-conditions">
+                    <div class="_template row">
+                        <div class="actions">
+                            <a id="pass" href="#" onclick="conditionPass(this);" title="This leg passes">
+                                <img width="24" height="24" src="img/yes.svg" /></a>
+                            <a id="fail" href="#" onclick="conditionFail(this);" title="This leg fails">
+                                <img width="24" height="24" src="img/no.svg" /></a>
+                        </div>
+                        <span id="text">Parlay Leg Text</span>
+                    </div>
+                </section>
+                <section id="parlay-stats">
+                    <div class="field">
+                        Total bets
+                    </div>
+                    <div class="figure" id="total">
+                        $lots
+                    </div>
+                    <div class="field">
+                        Net earnings
+                    </div>
+                    <div class="figure" id="earnings">
+                        $none
+                    </div>
+                    <table>
+                        <tr class="header">
+                            <th width="50%">Player</th>
+                            <th>Won</th>
+                        </tr>
+                        <tr class="_template">
+                            <th>_</th>
+                            <td id="earnings">...</td>
+                        </tr>
+                    </table>
+                </section>
+            </main>
+
+            <script>
+                const stats = { passed: false, failed: false };
+
+                function addConditions() {
+                    const condThing = document.querySelector("#parlay-conditions");
+
+                    // drop all rows from condition table
+                    condThing.querySelectorAll(".row:not(._template)").forEach(element => {
+                        element.remove();
+                    });
+
+                    // add rows for each parlay condition
+                    const tempRow = condThing.querySelector("._template");
+
+                    let index = 0;
+                    parlayConditions.forEach((c) => {
+                        // clone template row and remove template class
+                        const newRow = tempRow.cloneNode(true);
+                        newRow.classList.remove("_template");
+
+                        newRow.setAttribute("condindex", index ++);
+
+                        // add text
+                        newRow.querySelector("#text").innerText = c.text;
+
+                        // add conditional classes and remove obsolete buttons
+                        if (c.passed) {
+                            newRow.classList.add("passed");
+                            newRow.querySelector("#fail").remove();
+                            newRow.querySelector("#pass").title = "Click to un-pass condition";
+                        } else if (c.failed) {
+                            newRow.classList.add("failed");
+                            newRow.querySelector("#pass").remove();
+                            newRow.querySelector("#fail").title = "Click to un-fail condition";
+                        }
+
+                        condThing.appendChild(newRow);
+                    });
+
+                    // update player stats
+                    recalculate();
+                }
+
+                function recalculate() {
+                    // recalculate parlay pass/failure
+                    stats.passed = true;
+                    stats.failed = false;
+                    parlayConditions.forEach((c) => {
+                        if (c.failed) {
+                            stats.failed = true;
+                        } else if (!c.passed) {
+                            stats.passed = false;
+                        }
+                    });
+
+                    const statThing = document.querySelector("#parlay-stats");
+
+                    // get total bets
+                    let total = 0;
+                    participants.forEach((p) => {
+                        total += p.bet;
+                    });
+
+                    // update bets
+                    const statBets = statThing.querySelector("#total");
+                    statBets.innerText = dollarAmount(total);
+
+                    // update stats
+                    const statEarnings = statThing.querySelector("#earnings");
+                    //FIXME at some point
+                    if (stats.failed) {
+                        statEarnings.innerText = "-" + dollarAmount(total);
+                        statEarnings.classList.add("negative")
+                        statEarnings.classList.remove("positive")
+                    } else if (stats.passed) {
+                        statEarnings.innerText = dollarAmount(total);
+                        statEarnings.classList.add("positive")
+                        statEarnings.classList.remove("negative");
+                    } else {
+                        statEarnings.innerText = "???";
+                        statEarnings.classList.remove("positive");
+                        statEarnings.classList.remove("negative");
+                    }
+
+                    // drop all rows from stat table
+                    statThing.querySelectorAll("table tr:not(._template):not(.header)").forEach(element => {
+                        element.remove();
+                    });
+
+                    // rebuild
+                    const statTable = document.querySelector("#parlay-stats table");
+                    const tempRow = statTable.querySelector("._template");
+                    participants.forEach((p) => {
+                        // clone template row and remove template class
+                        const newRow = tempRow.cloneNode(true);
+                        newRow.classList.remove("_template");
+
+                        // update with player info
+                        newRow.querySelector("th").innerText = p.name;
+
+                        const playerEarnings = newRow.querySelector("#earnings");
+                        if (stats.failed) {
+                            playerEarnings.innerText = "-" + dollarAmount(p.bet);
+                            playerEarnings.classList.add("negative");
+                        } else if (stats.passed) {
+                            playerEarnings.innerText = dollarAmount(p.bet);
+                            playerEarnings.classList.add("positive");
+                        } else {
+                            playerEarnings.innerText = "???";
+                        }
+
+                        // append row
+                        statTable.appendChild(newRow);
+                    });
+                }
+
+                // pass parlay condition
+                function conditionFail(element) {
+                    let el = element;
+                    while (!el.classList.contains("row")) {
+                        el = el.parentElement;
+                        if (el == null) {
+                            throw new Error("can't find condition row");
+                        }
+                    }
+
+                    // get index
+                    const index = Number.parseInt(el.getAttribute("condindex"));
+                    parlayConditions[index].failed = !el.classList.contains("failed");
+
+                    addConditions();
+                }
+
+                // fail parlay condition
+                function conditionPass(element) {
+                    let el = element;
+                    while (!el.classList.contains("row")) {
+                        el = el.parentElement;
+                        if (el == null) {
+                            throw new Error("can't find condition row");
+                        }
+                    }
+
+                    // get index
+                    const index = Number.parseInt(el.getAttribute("condindex"));
+                    parlayConditions[index].passed = !el.classList.contains("passed");
+
+                    addConditions();
+                }
+            </script>
+        </div>
+    </div>
+
+    <script>
+        // hide every page
+        document.querySelectorAll("div.page").forEach((page) => page.style.display = "none");
+        // show first page
+        document.querySelector("#page0").style.display = null;
+
+        function dollarAmount(n) {
+            if (n > 1000000000000) {
+                return "$lots";
+            }
+
+            const [src, dec] = n.toString().split(".", 2);
+            let result = "";
+            let comma = 0;
+            
+            for (i = src.length - 1; i >= 0; i --) {
+                if (comma != 0 && comma % 3 == 0) {
+                    result = "," + result;
+                    comma = 0;
+                }
+                comma ++;
+
+                result = src[i] + result;
+            }
+
+            if (dec) {
+                result += "." + dec.slice(0, 2).padEnd(2, "0");
+            } else {
+                result += ".00";
+            }
+
+            return "$" + result;
+        }
+
+        // get page containing element
+        function getPage(element) {
+            // find page
+            let el = element;
+            while (!el.classList.contains("page")) {
+                el = el.parentElement;
+                console.log(el);
+
+                if (el == null) {
+                    throw new Error("couldn't find page corresponding to element " + element.toString());
+                }
+            }
+
+            return el;
+        }
+
+        // switch to previous page
+        function pagePrev(element) {
+            const el = getPage(element);
+
+            // get previous page
+            const previous = el.previousElementSibling;
+
+            // hide current page and show previous page
+            if (previous) {
+                el.style.display = "none";
+                previous.style.display = null;
+            } else {
+                throw new Error("no page before " + el.toString());
+            }
+        }
+
+        // switch to next page
+        function pageNext(element) {
+            const el = getPage(element);
+
+            // get next page
+            const next = el.nextElementSibling;
+
+            // hide current page and show next page
+            if (next) {
+                el.style.display = "none";
+                next.style.display = null;
+
+                const onEnter = next.getAttribute("onenter");
+                if (onEnter) {
+                    eval(onEnter);
+                }
+            } else {
+                throw new Error("no page after " + el.toString());
+            }
+        }
+    </script>
+</body>
+
+</html>
