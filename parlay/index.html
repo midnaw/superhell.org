@@ -30,15 +30,18 @@
                 <p>by Dr. Midna J. Wickerman, esq.</p>
             </header>
             <main class="disclaimer">
-                <h3>
-                    Use of this website to manage real-money betting is <em>expressly</em> forbidden.
-                </h3>
-                <p>
-                    Gambling is a terrible idea anyways and parlays are obscenely poor financial decisions. This
-                    website is not intended to promote gambling in any way, shape or form. If you win a bunch of
-                    imaginary money by doing this and then lose your mortgage putting it all on black at a real casino,
-                    that is <strong>not</strong> my fault and you should <em>really</em> know better.
-                </p>
+                <div class="tutorial">
+                    <h3>
+                        Use of this website to manage real-money betting is <em>expressly</em> forbidden.
+                    </h3>
+                    <p>
+                        Gambling is a terrible idea anyways and parlays are obscenely poor financial decisions. This
+                        website is not intended to promote gambling in any way, shape or form. If you win a bunch of
+                        imaginary money by doing this and then lose your mortgage putting it all on black at a real
+                        casino,
+                        that is <strong>not</strong> my fault and you should <em>really</em> know better.
+                    </p>
+                </div>
             </main>
             <footer>
                 <div class="spacer"></div>
@@ -293,7 +296,6 @@
                         it. To mark it as <strong>failed</strong> (having not,) press the X icon. To reset a condition,
                         click its status icon again.
                     </p>
-                    <hr />
                     <div class="_template row">
                         <div class="actions">
                             <a id="pass" href="#" onclick="conditionPass(this);" title="This leg passes">
@@ -320,11 +322,11 @@
                     <table>
                         <tr class="header">
                             <th width="50%">Player</th>
-                            <th>Won</th>
+                            <th>Earnings</th>
                         </tr>
                         <tr class="_template">
                             <th>_</th>
-                            <td id="earnings">...</td>
+                            <td id="earnings">TBD</td>
                         </tr>
                     </table>
                 </section>
@@ -468,7 +470,7 @@
                         statEarnings.classList.add("positive")
                         statEarnings.classList.remove("negative");
                     } else {
-                        statEarnings.innerText = "~";
+                        statEarnings.innerText = "TBD";
                         statEarnings.classList.remove("positive");
                         statEarnings.classList.remove("negative");
                     }
@@ -497,7 +499,7 @@
                             playerEarnings.innerText = "+" + dollarAmount(p.bet);
                             playerEarnings.classList.add("positive");
                         } else {
-                            playerEarnings.innerText = "???";
+                            playerEarnings.innerText = "TBD";
                         }
 
                         // append row

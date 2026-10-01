@@ -1,0 +1,388 @@
+// THIS IS WHAT YOU SHOULD BE MODIFYING, not main.css!!!!
+
+* {
+    box-sizing: border-box;
+}
+
+@accent: #cbdb70;
+
+@bg-main: #1b2819;
+@bg-main-light: #283a26;
+@bg-tablerow-header: #121b12;
+@bg-tablerow-odd: @bg-main;
+@bg-tablerow-even: @bg-main-light;
+@bg-positive: #0b290b;
+@bg-negative: #290b0b;
+
+@text-normal: #ffffff;
+@text-negative: #ff0000;
+@text-negative-legible: #ffaaaa;
+@text-positive: @accent;
+@text-positive-legible: @text-positive;
+@text-dark: @bg-main;
+
+@border: #1a1f16;
+
+@text-shadow: -1px -1px black;
+
+body {
+    background: url(img/table.png) @bg-main;
+    background-repeat: repeat;
+
+    font-size: 17px;
+    font-family: SourceSerif, serif;
+
+    color: @text-normal;
+
+    text-shadow: @text-shadow;
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: 100vh;
+    margin: 0px;
+    padding: 0px;
+
+    line-height: 1.2;
+}
+
+h1 {
+    font-family: DotMatrix, monospace;
+    font-size: 48px;
+    line-height: 1.0;
+}
+
+a {
+    color: @accent;
+
+    a:hover img {
+        filter: brightness(200%);
+    }
+}
+
+.negative {
+    color: @text-negative;
+
+    img {
+        filter: hue-rotate(-70deg);
+    }
+}
+
+.positive {
+    color: @accent;
+}
+
+.a-great-success {
+    color: white;
+    text-shadow: 0px 0px 12px lime, 0px 0px 6px green;
+}
+
+.icon {
+    display: inline-block;
+    height: 24px;
+    width: 24px;
+    vertical-align: middle;
+}
+
+/* this is also jank but whatever */
+.spacer {
+    flex-grow: 1;
+}
+
+/* controls */
+.button {
+    border: 1px solid @accent;
+    color: @accent;
+    padding: 0.1rem 0.6rem;
+
+    text-shadow: none;
+    filter: drop-shadow(1px 1px @text-shadow);
+
+    border-radius: 4px;
+
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+        border-color: @text-normal;
+        color: @text-normal;
+    }
+
+    &.primary {
+        font-weight: bold;
+        background: @accent;
+        color: @text-dark;
+    }
+
+    &.primary:hover {
+        background: @text-normal;
+    }
+}
+
+input[type=text],
+input[type=number] {
+    font: inherit;
+    border: 1px solid @accent;
+    color: inherit;
+    background: none;
+}
+
+// yeah sorry about this
+._template {
+    display: none !important;
+}
+
+// "root" actually contains most of the page elements and stuff
+#root {
+    display: flex;
+    flex-direction: column;
+
+    margin: 0px auto;
+
+    min-height: 100vh;
+    width: 1000px;
+
+    padding: 24px;
+
+    // janky way to keep active page centered
+    &::before,
+    &::after {
+        content: ' ';
+        display: block;
+        flex-grow: 1;
+    }
+
+    .page {
+        display: flex;
+        flex-direction: column;
+
+        height: 60vh;
+
+        // page header
+        header {
+            color: @accent;
+            // border-bottom: 1px solid @accent;
+
+            h1 {
+                margin: 0px;
+            }
+
+            p {
+                margin: 0px;
+                margin-bottom: 1rem;
+
+                font-style: italic;
+            }
+        }
+
+        main {
+            background: @bg-main-light;
+            border: 1px solid @border;
+
+            overflow-y: auto;
+            flex-grow: 1;
+
+            .tutorial {
+                padding: 1rem;
+                font-style: italic;
+                background: @bg-main;
+                border: 1px solid @border;
+                margin: 0.6rem;
+                border-radius: 4px;
+                font-size: 16px;
+            }
+        }
+
+        footer {
+            display: flex;
+            padding: 0px;
+            padding-top: 1rem;
+            // border-top: 1px solid @accent;
+
+            .button {
+                margin-left: 0.4rem;
+
+                // but don't space first button
+                &:first-child {
+                    margin-left: 0px;
+                }
+            }
+        }
+    }
+}
+
+// styles for the intro disclaimer
+main.disclaimer {
+    h3 {
+        color: @accent;
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+
+    p {
+        margin-top: 0.4rem;
+        margin-bottom: 0px;
+    }
+}
+
+// the parlay and player builders are basically the same thing i think
+#parlay-builder,
+#player-builder {
+    .row {
+        background: @bg-tablerow-odd;
+
+        padding: 0.4rem;
+        display: flex;
+        align-items: center;
+
+        &:nth-child(even) {
+            background: @bg-tablerow-even;
+        }
+
+        &:last-child {
+            border-bottom: 1px solid @border;
+        }
+
+        .actions {
+            padding-right: 0.8rem;
+        }
+
+        input {
+            border: none;
+            padding: 0px;
+            flex-grow: 1;
+
+            &[type=number] {
+                flex-grow: 0;
+            }
+        }
+
+        // pretty lookin dollar sign for player builder bet amount
+        .dollar-flare {
+            font-size: 24px;
+            font-weight: bold;
+            font-style: italic;
+            margin-right: 0.2rem;
+            user-select: none;
+            color: @accent;
+        }
+    }
+}
+
+// align parlay conditions and stats side by side
+#page3 main {
+    display: flex;
+}
+
+// parlay conditions
+#parlay-conditions {
+    flex-grow: 1;
+    overflow: auto;
+
+    hr {
+        border: none;
+        border-bottom: 1px solid @border;
+
+        margin: 0px;
+    }
+
+    .row {
+        display: flex;
+        align-items: center;
+        padding: 0.4rem;
+
+        background: @bg-tablerow-odd;
+
+        .actions {
+            padding-right: 0.8rem;
+        }
+
+        &:nth-child(even) {
+            background: @bg-tablerow-even;
+        }
+
+        &:last-child {
+            border-bottom: 1px solid @border;
+        }
+
+        &.failed {
+            background: @bg-negative;
+            color: @text-negative-legible;
+            font-style: italic;
+        }
+
+        &.passed {
+            background: @bg-positive;
+            color: @text-positive-legible;
+            font-style: italic;
+        }
+    }
+}
+
+// parlay statistics
+#parlay-stats {
+    background: @bg-tablerow-odd;
+    border-left: 1px solid @border;
+
+    padding: 1rem;
+
+    min-width: 40%;
+
+    .figure {
+        font-size: 48px;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    .field {
+        font-size: 16px;
+        color: @accent;
+    }
+
+    table {
+        margin-top: 1rem;
+        width: 100%;
+        border-collapse: collapse;
+
+        th {
+            background: @bg-tablerow-header;
+            text-align: left;
+        }
+
+        th,
+        td {
+            border: 1px solid @border;
+            padding: 0.2rem 0.6rem;
+        }
+    }
+}
+
+// what passes for "responsive" design
+@media screen and (max-width: 800px) {
+    #root::before {
+        display: none;
+    }
+
+    #root::after {
+        display: none;
+    }
+
+    #root {
+        width: 100vw;
+
+        .page {
+            height: 100%;
+            flex-grow: 1;
+        }
+
+        #root main {
+            display: block;
+        }
+
+        #parlay-stats {
+            width: 100%;
+            border-left: none;
+            border-top: 1px solid @border;
+        }
+    }
+}
