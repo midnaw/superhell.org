@@ -72,9 +72,10 @@
                 </div>
             </main>
             <footer>
+                <a class="button" onclick="copyUrl(this);">Copy Sharable URL</a>
                 <div class="spacer"></div>
                 <a class="button" onclick="addCondition();">+ Add Condition</a>
-                <a class="button primary" onclick="createParlay();">Next &raquo;</a>
+                <a class="button primary" onclick="createParlay(); pageNext(this)">Next &raquo;</a>
             </footer>
 
             <script>
@@ -116,7 +117,7 @@
                     // make sure we have enough rows for a parlay
                     if (condRows.length < 2) {
                         alert("A parlay requires at least two conditions.");
-                        return;
+                        throw new Error("A parlay requires at least two conditions.");
                     }
 
                     // add rows to condition list
@@ -127,13 +128,29 @@
                         const value = row.querySelector("#condition").value;
                         if (!value) {
                             alert("Parlay conditions cannot be empty.");
-                            return;
+                            throw new Error("Parlay conditions cannot be empty.");
                         }
                         parlayConditions.push({ text: value, passed: false, failed: false });
                     };
+                }
 
-                    // move to next page
-                    pageNext(builder);
+                async function copyUrl(button) {
+                    createParlay();
+
+                    let url = new URL(window.location.href);
+
+                    // build JSON array
+                    const urlJson = [];
+                    parlayConditions.forEach((c) => {
+                        urlJson.push(c.text);
+                    })
+
+                    // staple to URL
+                    url.search = "?c=" + encodeURIComponent(btoa(JSON.stringify(urlJson)));
+
+                    await navigator.clipboard.writeText(url.toString());
+
+                    button.innerText = "Copied!";
                 }
 
                 // add two empty conditions for the player to fill out
@@ -167,7 +184,9 @@
                 </section>
             </main>
             <footer>
-                <a class="button" onclick="pagePrev(this);" title="This is your last chance!">&laquo; Modify Parlay</a>
+                <a id="prev" class="button" onclick="pagePrev(this);" title="This is your last chance!">
+                    &laquo; Modify Parlay
+                </a>
                 <div class="spacer"></div>
                 <a class="button" onclick="addPlayer();">+ Add Player</a>
                 <a class="button primary" onclick="beginParlay();">Begin! &raquo;</a>
@@ -545,11 +564,6 @@
     </div>
 
     <script>
-        // hide every page
-        document.querySelectorAll("div.page").forEach((page) => page.style.display = "none");
-        // show first page
-        document.querySelector("#page0").style.display = null;
-
         function dollarAmount(n) {
             if (n > 1000000000000) {
                 return "$lots";
@@ -594,6 +608,18 @@
             return el;
         }
 
+        function pageJump(element) {
+            // hide every page
+            document.querySelectorAll("div.page").forEach((page) => page.style.display = "none");
+
+            element.style.display = null;
+
+            const onEnter = element.getAttribute("onenter");
+            if (onEnter) {
+                eval(onEnter);
+            }
+        }
+
         // switch to previous page
         function pagePrev(element) {
             const el = getPage(element);
@@ -605,6 +631,11 @@
             if (previous) {
                 el.style.display = "none";
                 previous.style.display = null;
+
+                const onEnter = next.getAttribute("onenter");
+                if (onEnter) {
+                    eval(onEnter);
+                }
             } else {
                 throw new Error("no page before " + el.toString());
             }
@@ -630,6 +661,37 @@
                 throw new Error("no page after " + el.toString());
             }
         }
+
+        let firstPage = document.querySelector("#page0");
+
+        // check for query parameter
+        const uri = new URL(location.href);
+        console.log(uri.searchParams);
+
+        try {
+            const uriConditions = uri.searchParams.get("c");
+            if (uriConditions) {
+                // decode as base64
+                const conditionsRaw = atob(uriConditions);
+                // then decode json
+                const conditionsJson = JSON.parse(conditionsRaw);
+                // then add conditions to list
+                conditionsJson.forEach((c) => {
+                    parlayConditions.push({ text: c, passed: false, failed: false })
+                });
+
+                // show player creator
+                firstPage = document.querySelector("#page2");
+                // hide back button
+                firstPage.querySelector("#prev").style.display = "none";
+            }
+        }
+        catch (e) {
+            alert(`Error parsing conditions from URL: ${e}`)
+        }
+
+        pageJump(firstPage);
+
     </script>
 </body>
 
